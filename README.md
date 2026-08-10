@@ -1,6 +1,16 @@
 # Claude Tunnel Proxy
 
-让远程（或本地）的 Claude Code 通过本地网络的代理访问 API 后端。核心场景：**远程服务器无法直接访问某 API（如 DeepSeek），但你的本地机器可以**。
+让远程服务器上的 Claude Code 通过本地网络访问外部 API。核心场景：**服务器三天两头抽风连不上外网，但你的本地机器可以正常访问**。
+
+## 为什么需要这个项目
+
+有一台远程 Linux 服务器，经常间歇性断网——外网 API 时而能连时而连不上。但本地 Windows 机器网络稳定，能正常访问 DeepSeek、GitHub 等服务。于是有了这个方案：
+
+- 在本地 Windows 上跑一个轻量 HTTP CONNECT 代理
+- 通过 SSH 反向隧道把远程端口映射到本地代理
+- 远程 Claude Code 的 API 请求经隧道走本地网络出去
+
+这样一来，即使服务器本身连不上外部 API，只要 SSH 隧道通畅，Claude Code 就能正常工作。同时也能用于其他需要走代理的场景（git push、curl 等）。
 
 ## 工作原理
 
