@@ -49,7 +49,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/yanjingshu/claude-tunnel-proxy.git
+git clone https://github.com/VinceYann/claude-tunnel-proxy.git
 cd claude-tunnel-proxy
 ```
 
