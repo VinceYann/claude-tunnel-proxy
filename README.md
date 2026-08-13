@@ -75,11 +75,13 @@ REMOTE_PORT="1080"             # 远程端口，默认与 PROXY_PORT 相同
 tunnel.bat
 ```
 
-**Linux / macOS:**
+**macOS / Linux:**
 ```bash
 chmod +x tunnel.sh stop-all.sh
 ./tunnel.sh
 ```
+
+> **macOS 需要先装 Python 3**（见下方「依赖」）。SSH 客户端系统自带。
 
 ### 4. 在远程服务器上配置 Claude Code
 
@@ -112,7 +114,25 @@ export NO_PROXY="localhost,127.0.0.1"
 ## 依赖
 
 - **Python 3** — 运行代理
-- **SSH 客户端** — 建立隧道（Windows 自带 OpenSSH，Linux/macOS 自带）
+- **SSH 客户端** — 建立隧道
+
+各平台说明：
+
+| 平台 | Python 3 | SSH |
+|---|---|---|
+| Windows | 从 [python.org](https://python.org) 安装，或 `winget install Python.Python.3` | 自带 OpenSSH（Win10 1809+） |
+| macOS | 未预装，需手动安装 | 自带 |
+| Linux | 多数发行版自带 | 自带 |
+
+**macOS 安装 Python 3（二选一）：**
+
+```bash
+# 方式一：Xcode 命令行工具（自带 python3）
+xcode-select --install
+
+# 方式二：Homebrew
+brew install python3
+```
 
 ## License
 
