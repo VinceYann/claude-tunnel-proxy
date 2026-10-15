@@ -8,8 +8,13 @@
 
 import AppKit
 
-// 项目目录（build 时由 build.sh 注入绝对路径）
-let projectDir = "__PROJECT_DIR__"
+// 项目目录：由 app 自身位置反推，不硬编码绝对路径。
+// TunnelBar.app 位于项目根目录下，向上退一级即为项目根，
+// 因此整个项目可随意移动，无需重新编译。
+let projectDir: String = {
+    let appURL = Bundle.main.bundleURL.resolvingSymlinksInPath()  // …/TunnelBar.app
+    return appURL.deletingLastPathComponent().path                // 项目根
+}()
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?

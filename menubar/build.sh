@@ -9,18 +9,15 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 APP_NAME="TunnelBar"
-PROJECT_DIR="$(cd .. && pwd)"
+PROJECT_DIR="$(cd .. && pwd)"   # 仅用于确定产物输出位置
 BUILD_DIR=".build"
 APP_BUNDLE="$PROJECT_DIR/$APP_NAME.app"
 
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
-# 注入项目绝对路径（用 | 作分隔符，项目路径不含该字符）
-sed "s|__PROJECT_DIR__|${PROJECT_DIR}|g" TunnelBar.swift > "$BUILD_DIR/TunnelBar.swift"
-
 echo "编译 ${APP_NAME} (Swift)..."
-swiftc -O -framework AppKit "$BUILD_DIR/TunnelBar.swift" -o "$BUILD_DIR/$APP_NAME"
+swiftc -O -framework AppKit TunnelBar.swift -o "$BUILD_DIR/$APP_NAME"
 
 echo "打包 ${APP_BUNDLE} ..."
 rm -rf "$APP_BUNDLE"
