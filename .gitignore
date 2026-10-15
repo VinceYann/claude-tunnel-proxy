@@ -18,3 +18,11 @@ __pycache__/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Runtime (PID + logs)
+.run/
+tunnel.log
+
+# Menubar app build artifacts
+TunnelBar.app/
+menubar/.build/

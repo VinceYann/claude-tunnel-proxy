@@ -57,14 +57,15 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# ---- 2. Open SSH reverse tunnel ----
-echo "[2/2] Opening SSH reverse tunnel to ${SSH_HOST}..."
+# ---- 2. Open interactive SSH session with reverse tunnel ----
+echo "[2/2] Logging into ${SSH_HOST} (with reverse tunnel)..."
 echo "      remote 127.0.0.1:${REMOTE_PORT} <- local 127.0.0.1:${PROXY_PORT}"
 echo ""
-echo "      Press Ctrl+C to stop."
+echo "      Tunnel is active only while this SSH session is connected."
+echo "      Type 'exit' or close the session to stop it."
 echo ""
 
-ssh -N \
+ssh \
     -o ServerAliveInterval=60 \
     -o ServerAliveCountMax=3 \
     -o ExitOnForwardFailure=yes \
