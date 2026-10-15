@@ -35,12 +35,17 @@
 ## 项目结构
 
 ```
-├── proxy.py          # 核心：HTTP CONNECT 代理服务器
-├── tunnel.bat        # Windows 一键启动脚本
-├── tunnel.sh         # Linux / macOS 一键启动脚本
-├── stop-all.bat      # Windows 停止脚本
-├── stop-all.sh       # Linux / macOS 停止脚本
-├── .env.example      # 配置文件模板
+├── proxy.py              # 核心：HTTP CONNECT 代理服务器
+├── tunnel.bat            # Windows 一键启动脚本
+├── tunnel.sh             # Linux / macOS 前台启动脚本
+├── stop-all.bat          # Windows 停止脚本
+├── stop-all.sh           # Linux / macOS 停止脚本
+├── tunnel-daemon.sh      # macOS / Linux 后台控制（start/stop/restart/status）
+├── start.command         # macOS 一键启动（Finder 双击运行）
+├── menubar/              # macOS 菜单栏应用
+│   ├── TunnelBar.swift   #   应用源码（Swift）
+│   └── build.sh          #   编译打包脚本
+├── .env.example          # 配置文件模板
 └── .gitignore
 ```
 
@@ -75,11 +80,31 @@ REMOTE_PORT="1080"             # 远程端口，默认与 PROXY_PORT 相同
 tunnel.bat
 ```
 
-**macOS / Linux:**
+**macOS / Linux（前台运行）:**
 ```bash
 chmod +x tunnel.sh stop-all.sh
 ./tunnel.sh
 ```
+
+> 前台模式下隧道随终端会话存活，`Ctrl+C` 或关闭终端即停止。
+
+**macOS / Linux（后台常驻，推荐）:**
+
+```bash
+./tunnel-daemon.sh start      # 启动，代理与隧道常驻后台
+./tunnel-daemon.sh status     # 查看状态
+./tunnel-daemon.sh restart    # 重启
+./tunnel-daemon.sh stop       # 停止
+```
+
+代理与隧道以后台进程运行，不占用终端。状态区分 **运行中 / 部分运行 / 已停止**，可识别残留的半开进程。
+
+**macOS 免终端启动:**
+
+| 方式 | 操作 |
+|---|---|
+| 一键启动 | Finder 中双击 `start.command` |
+| 菜单栏控制 | 双击 `TunnelBar.app`，见下方「macOS 菜单栏应用」 |
 
 > **macOS 需要先装 Python 3**（见下方「依赖」）。SSH 客户端系统自带。
 
@@ -101,8 +126,49 @@ export NO_PROXY="localhost,127.0.0.1"
 
 ### 5. 停止
 
-**Windows:** 运行 `stop-all.bat`  
-**Linux / macOS:** 运行 `./stop-all.sh`，或直接 `Ctrl+C` 终止 `tunnel.sh`（会自动清理）
+**Windows:** 运行 `stop-all.bat`
+
+**Linux / macOS:**
+- 后台模式：`./tunnel-daemon.sh stop`
+- 前台模式：`Ctrl+C` 终止 `tunnel.sh`（会自动清理）
+- 兜底清理残留代理：`./stop-all.sh`
+
+## macOS 菜单栏应用
+
+常驻状态栏的小前端，用颜色圆点显示隧道状态，点击即可启停。
+
+| 圆点 | 状态 |
+|---|---|
+| 🟢 绿色 | 运行中 |
+| 🟠 橙色 | 部分运行（代理或隧道掉了一个） |
+| ⚪ 灰色 | 已停止 |
+
+### 构建
+
+```bash
+chmod +x menubar/build.sh
+./menubar/build.sh
+```
+
+产物为项目根目录下的 `TunnelBar.app`。启动：`open TunnelBar.app`，或 Finder 双击。
+
+> 首次打开若提示「无法验证开发者」，在「系统设置 → 隐私与安全性」中点「仍要打开」。
+
+### 功能
+
+- 每 5 秒自动刷新状态圆点
+- 点击圆点弹出菜单：启动隧道 / 停止隧道 / 打开项目目录 / 退出
+- 纯菜单栏应用（`LSUIElement`），不占用 Dock
+
+### 构建依赖
+
+需要 `swiftc`，由 Xcode 命令行工具提供（多数 macOS 已安装）：
+
+```bash
+xcode-select --install
+```
+
+界面与逻辑分离：菜单栏应用只是 `tunnel-daemon.sh` 的图形外壳，所有启停与状态判断都走同一个脚本，不存在两套逻辑。
 
 ## 适用场景
 
