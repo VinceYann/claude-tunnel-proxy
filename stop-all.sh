@@ -2,11 +2,15 @@
 # ============================================================
 #  Stop Claude Code local proxy (Linux / macOS)
 #  ---------------------------------------------
-#  Kills only python processes running proxy.py.
+#  兜底清理脚本：只杀「本项目」的 proxy.py。
+#  原先用 pgrep -f "python.*proxy.py" 会连别的项目的 proxy.py 一起杀，
+#  这里改成匹配本目录下的脚本绝对路径。
+#  注意：只对用绝对路径启动的代理有效（tunnel-daemon.sh / tunnel.sh 都是）。
 # ============================================================
 set -euo pipefail
 
-PIDS=$(pgrep -f "python.*proxy.py" 2>/dev/null || true)
+SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
+PIDS=$(pgrep -f "$SELF_DIR/proxy.py" 2>/dev/null || true)
 
 if [[ -z "$PIDS" ]]; then
     echo "No proxy.py process found. Nothing to stop."

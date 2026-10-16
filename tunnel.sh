@@ -43,7 +43,8 @@ done
 
 # ---- 1. Start proxy in background ----
 echo "[1/2] Starting local proxy (${PROXY_HOST}:${PROXY_PORT})..."
-python3 proxy.py &
+# 用绝对路径启动，进程命令行里能认出是"本项目"的 proxy.py
+python3 "$PWD/proxy.py" &
 PROXY_PID=$!
 echo "       proxy PID: $PROXY_PID"
 sleep 2
